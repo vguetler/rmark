@@ -1,0 +1,650 @@
+#R FOR SOCIAL SCIENTISTS
+
+#comments help you remember the code/steps etc
+
+
+
+############################
+# 1 Creating objects in R
+###########################
+
+#objectives: how to define, name objects
+#to assign values to objects and save using the source 
+#value can be numbers, characters, etc which you assign to objects, these can be variables, dataset, functions
+
+area_hectares <- 1.0
+x <- 3
+
+#assignment operater <- assigns values on the right to objects on the left
+# 3 goes to X, or 1.0 goes to area_hectares
+
+#objects can be given any name
+current_temperature <- 70
+subject_id <- 5
+Age <- 30
+age <- 30
+
+#Printing the values, 
+# r does not print the value unless you ask it to. You can do this by using parenthesis or typing the name of the object
+
+area_hectares <- 1.0 #doesnt print anything
+(area_hectares) #put in paranthesis to print
+
+#lets do some arithmetics now that area hectares is in R's memory
+#convert the area into acres
+
+2.47 * area_hectares
+
+#can also change an objects value by assigning a new one
+area_hectares <- 2.5
+2.47 * area_hectares
+
+#assigning values to one object doesnt change the values of other objects, i.e
+
+area_acres <- 2.47 * area_hectares
+area_acres
+
+area_hectares <-50
+
+#Question: what do you think the current content of area acres is? 123.5 or 6.175
+
+area_acres #still 6.175 because we havent rerun the line 40 after changing the value or hectares
+
+area_acres <- 2.47 * area_hectares #if we rerun the changes we get 123.5
+area_acres #123.5
+
+##################################
+#2 Functions and their arguments
+##################################
+
+#functions automate sets of commands, predefined or can be imported from R packages
+#functions get one or more arguments, may return a value
+
+b <- sqrt(2)
+
+#another function taking multiple arguments round()
+
+round(3.14159)
+
+#find arguments for a function using
+args(round)
+?round
+
+round(3.14159, digits = 2)
+
+round(3.14159, 2)
+
+#name arguments you can switch the order
+
+round(digits = 2, x = 3.14159)
+
+##############################
+# 3. Vectors and data type
+##############################
+
+#vectors most common data type in R, composed of series of values can be numbers or characters
+#example create a vector of the number of household members for the households we've interviewed
+#use the c() function
+
+?c() #combines values into a vector or list
+
+hh_members <- c(3, 7, 10, 6)
+hh_members
+
+#vectors also contain characters
+#e.g. vector of list of material used to build our interviewers house
+
+respondent_wall_type <- c("muddaub", "burntbrick", "sunbricks")#quotes are essential, otherwise R will assume they are objects hence the error
+respondent_wall_type
+
+#many functions to inspect content of a vector
+# e.g length() how many elements are in a vector
+
+length(hh_members)
+length(respondent_wall_type)
+
+#important feature of a vector: all elements are same data type
+#function class() indicates class/type of the object
+
+class(hh_members) #numeric
+class(respondent_wall_type) #chr
+
+#function str() structure, provides structure of an object and its elements
+
+str(hh_members)
+str(respondent_wall_type)
+
+#you can use the c() function to add other elements to your vectors
+
+possessions <- c("bicycle", "radio", "television")
+possessions <- c(possessions, "mobile_phone") #add to the end of vector
+possessions <- c("car", possessions) #adds to the beginning
+
+#exercises
+
+#############################
+# 4. Subsetting vectors
+#############################
+
+#extract one or several values from a vector we use square brackets []
+
+respondent_wall_type <- c("muddaub", "burntbricks", "sunbricks")
+respondent_wall_type[1]  #one value
+
+respondent_wall_type[c(3,2)] #more values
+
+#also repeat indices to create an object with more elements than the original one
+
+more_respondent_wall_type <- respondent_wall_type[c(1,2,3,2,1,3)]
+more_respondent_wall_type
+
+#R indices start at 1, other programs i.e python starts at 0
+
+#############################
+# 5 Conditional subsetting
+#############################
+
+#another common way of subsetting is by using a logical vector. 
+#TRUE will select element with same index, FALSE will not
+
+hh_members <- c(3,7,10,6)
+hh_members[c(TRUE, FALSE, TRUE, TRUE)]
+
+#select above 5
+
+hh_members > 5 #returns logicals with T for the indices that meet the condition
+
+#can also select only values above 5
+
+hh_members[hh_members >5]
+
+#you can combine multiple tests using & "and" (both conditions are true) or | "or" one of the conditions is true
+
+hh_members[hh_members < 3 | hh_members > 5]
+
+hh_members[hh_members >= 7 & hh_members == 3]
+
+#the function %in% allows you to test if any elements of a search vector are found
+#function is match
+
+possessions <- c("cars", "bicycle", "radio", "television", "mobile_phone")
+possessions[possessions =="cars" | possessions == "bicycle"] #returns both car and bike
+
+possessions %in% c("cars", "bicycle", "motorcycle", "trunk", "boat")
+#we didnt have the last 3 in our possessions object, hence F
+
+########################
+# 6. Missing Data
+########################
+
+#missing data in r are represented in vectors as NA
+#if missing values, functions will return NA
+#you can add the argument na.rm=TRUE (na remove) to calculate the result while ignoring the missing values
+
+rooms <- c(2,1,1,NA, 4)
+mean(rooms) #returns NA, the mean function returns NA because of a missing value
+
+max(rooms) #same
+
+max(rooms, na.rm = TRUE) #output is 4, it now works because we removed NA from the calculation
+
+#if your data includes NA you might want to know functions such as 
+#?is.na() - indicates which elements are missing
+#?na.omit() - returns object with incomplete cases removed
+#?complete.cases() - returns a logical vector showing which cases are complete, have no NAs
+
+#extract elements which are not missing values is.na()
+rooms[!is.na(rooms)]
+rooms[is.na(rooms)]
+
+#returns object with incomplete cases removed na.omit()
+na.omit(rooms)
+
+#extract elements which are complete cases
+rooms[complete.cases(rooms)]
+
+#exercises
+
+rooms <- c(1,2,1,1,NA,3,1,3,2,1,8,1,NA,1)
+na.omit(rooms)
+rooms2 <- rooms[!is.na(rooms)]
+median(rooms2)
+rooms2_above2 <- rooms2[rooms2 >2]
+length(rooms2_above2)
+
+############################################
+##EPISODE 2 STARTING WITH DATA
+
+###########################################
+
+#Objectives: describe a data frame, load external data from a .csv file into a data frame, summarize, describe
+
+#Presentations of the SAFI(Studying African Farmer-Led Irrigation) dataset with has info on farming and irrigation methods in TZ and Mozambique
+
+#load packages
+#tidyverse() collection of packages including readr() that we will need to load dataset
+
+install.packages("tidyverse")
+library(tidyverse)
+
+#First download and save the data in our working directory, you should have done this in the first lessons
+
+dir.create("data")
+dir.create("data_output")
+dir.create("fig_output")
+
+#download the data
+download.file("https://ndownloader.figshare.com/files/11492171",
+              "data/SAFI_clean.csv", mode = "wb")
+
+#load and assign the data a new name, change the NULL into NA
+
+interviews <- read_csv("data/SAFI_clean.csv", na = "NULL")
+
+interviews #check if data has loaded
+View(interviews)
+head(interviews)
+
+#b. What are data frames and tibbles?#################################################
+#show students the slide for this section and explain - like excel but all columns/vectors must have same data type i.e numericals, characters etc
+
+class(interviews)
+#show the tibble for explanation i.e. key_Id is a interger, numerical vector; village is chr etc
+
+#Inspecting data frames
+#various functions to inspect our data
+#size
+dim(interviews) #dimensions of the object - returns a vector with number of rows as 1st element, no. of columns as 2nd element
+nrow(interviews) #returns no. of rows
+ncol(interviews) #returns no. of columns
+
+#content
+
+head(interviews) #shows first 6 rows
+tail(interviews) #shows last 6 rows
+
+#names
+names(interviews) #returns column names 
+
+#summary
+str(interviews) #structure of the object and info about class, length and content of each column
+summary(interviews) #summary stats of each column
+
+#C. Indexing and subsetting data frames######################################################
+
+#row numbers come first, followed by columns
+
+#1st element/row in the 1st column
+interviews[1,1] #returns 1st obs in the key_ID column which is the first one
+
+interviews[1,5]
+interviews[5,5]
+
+##first element in the 6th column as a data.frame
+interviews[1, 6]
+
+##first column of the data frame as a vector
+interviews[[1]] #as vector you add two brackets
+
+##first column of the data frame as a data frame 
+interviews[1]
+
+##first 3 elements in the 7th column as a data frame
+
+interviews[1:3, 7]
+
+##the 3rd row of the data frame as a data.frame
+
+interviews[3, ] #when we live the column blank it returns all columns
+
+interviews[, 3] #all obs in 3rd columns
+
+#equivalent to head_interviews <- head(interviews)
+
+head_interviews <- interviews[1:6, ] #creates and saves new data with only the 1st 6 obs
+
+interviews[1:10, ]#first 10 increasing order
+interviews[10:1, ]#fist 10 decreasing order
+
+#can also exclude certain indices using "-" sign
+interviews[, -1] #select all rows,columns but minus the 1st column (all data frame, expect 1st column)
+
+
+#equivalent to head(interviews)????
+interviews[-c(7:131), ]
+
+#data frames cab ve subset by calling indices but also calling their column names directly
+
+interviews["village"] #result is the column village in a data frame
+interviews[, "village"] #same as above
+interviews[["village"]] #returns vector
+interviews$village #same as above
+
+#exercise
+#1. create a dataframe with data in row 100
+
+interviews_100 <- interviews[100, ]
+lastrow <- nrow(interviews)
+interviews_last <- interviews[lastrow, ]
+interviews_middle <- interviews[(lastrow /2), ]
+
+##D. Factors #####################################
+
+#factors are type of data class that deals with categorical data
+#they represent categorical data i.e.gender = Female, Male, 
+#stored as integers associated with labels, can be ordered (ordinal variable) or unordered(nominal var)
+#treated as integer vectors by R
+#factors contain pre-defined set of values, R sorts levels in alphabetical order
+
+respondent_floor_type <- factor(c("earth", "cement", "cement", "earth"))
+
+levels(respondent_floor_type) #2 levels: cement and earth -alphebetical order
+
+nlevels(respondent_floor_type) #returns no. of levels: 2
+
+#sometimes the order matters i.e ordinal variables with 3 levels: low, medium and high
+respondent_floor_type #current level begins with cement then earth
+
+#reorder
+respondent_floor_type <- factor(respondent_floor_type, levels = c("earth", "cement"))
+respondent_floor_type #earth then cement
+
+#factors are represented by intergers in R (1,2)
+#made a mistake and want to recode cement to brick
+
+levels(respondent_floor_type) #earth, cement
+
+levels(respondent_floor_type)[2] <- "brick"
+levels(respondent_floor_type) #earth, brick
+
+#ordering your factors, use ordered=T
+
+respondent_floor_type_ordered <- factor(respondent_floor_type, ordered=T)
+respondent_floor_type_ordered #earth < brick
+
+##E. Converting Factors ######################################################
+
+#if you need to convert a factor to a chr vector, you use as.character(x)
+
+as.character(respondent_floor_type)
+
+#converting factors such as years to a numeric vector is trickier
+#convert factors to chrs, then to numbers or use the levels() function
+
+year_fct <- factor(c(1990, 1983, 1977, 1998, 1990)) #factor with 4 levels
+as.numeric(year_fct) #wrong and theres no warning
+
+as.numeric(as.character(year_fct))
+
+#levels function is recomemded
+as.numeric(levels(year_fct))[year_fct]
+
+##F. Renaming Factors########################################################
+
+#plot function to glance at the no. of observations by each factor level
+
+#create a vector from the data frame column memb_assoc SAFI dataset
+
+str(interviews) #remember the structure of the dataset
+
+memb_assoc <- interviews$memb_assoc
+memb_assoc #chr
+
+#convert it to a factor
+memb_assoc <- as.factor(memb_assoc) #factor with 2 levels: no, yes
+
+#lets see how it looks like
+memb_assoc
+
+#lets create a bar plot to inspect the distribution
+plot(memb_assoc)
+
+#what about the NAs?
+#we can encode them and include in the plot
+
+#recreate the vector from the data frame column
+
+memb_assoc <- interviews$memb_assoc
+
+#replace missing data with "undetermined"
+
+memb_assoc[is.na(memb_assoc)] <- "undetermined"
+
+#convert into a factor since its chr
+memb_assoc <- as.factor(memb_assoc)
+
+#look at it
+memb_assoc
+
+#lets plot it again
+plot(memb_assoc)
+
+#Exercises
+
+## G. Formatting Dates
+#convert date and time into a variable appropriate for analysis
+
+library(lubridate) #the function takes a vector representing year, month, day and converts it to a date vector
+
+#lets extract the date column and inspect its structure
+
+dates <- interviews$interview_date
+str(dates)
+
+#use the day(), year() and month() functions to extract the info
+
+#create new variables/columns day, month, year. 
+interviews$day <- day(dates)
+interviews$month <-month(dates)
+interviews$year <- year(dates) 
+interviews #Now dataset has 17 columns not 14
+
+#################################################################################
+
+#EPISODE 3: INTRODUCING DPLYR AND TIDYR
+
+##################################################################################
+
+#objectives: use and explain the purpose of dplyr and tidyr packages, select certain columns in the data frame
+
+#Learning dplyr and tidyr
+
+#packages were loaded into r when we called library(tidyverse) earlier
+
+#load packages
+library(tidyverse)
+
+#load data
+interviews <- read_csv("data/SAFI_clean.csv", na= "NULL") #we already loaded in the previous lessons
+
+#preview data
+View(interviews)
+str(interviews)
+
+#we are going to learn some common dplyr functions:
+
+##A. Selecting columns and filtering rows
+#to select a column, first arg in the function is the dataframe and the collumns to keep
+
+select(interviews, village, no_membrs, years_liv)
+
+#to choose rows based on a specific criteria use filter()
+filter(interviews, village=="God") #43 obs and 14 columns
+
+##B. Pipes
+#What if you want to select and filter at the same time?
+#3 ways: intermediate steps, nested functions, or pipes
+#We use pipes %>%
+
+#example of multiple steps
+interviews2 <- filter(interviews, village=="God") #lets save the filtered data into a new dataframe
+interviews_god <- select(interviews2, no_membrs, years_liv) #but we only 3 variables not 14, so use select
+interviews_god # now has 2 variables/columns
+#this is readable but will clutter up your workspace, hard to keep track of the multiple steps
+
+
+#example of nested functions i.e. one function inside another
+
+interviews_god <- select(filter(interviews, village=="God"), no_membrs, years_liv)
+
+#this is handy but can be difficult to read if too many functions are nested
+#as R evaluates the expression from inside out - filtering, then selecting
+
+#last option pipes are handy
+#pipes let you take the output of one functon and send it to the next
+# keyboard shortcut of typing the pipe %>% - cmd, shift and M
+
+interviews %>% 
+  filter(village == "God") %>% 
+  select(no_membrs, years_liv)
+
+#we use the pipe to send the interviews dataset through filter which keeps rows where village is God,
+#then through select whick only keeps two variables. 
+#find it useful using the word "then"
+
+#if we want to save this output, we can assing it a new name
+interviews_god <- interviews %>% 
+  filter(village == "God") %>% 
+  select(no_membrs, years_liv)
+
+interviews_god
+
+#Exercises
+
+interviews$memb_assoc
+
+interviews %>% 
+  filter(memb_assoc=="yes") %>% 
+  select(affect_conflicts, liv_count, no_meals)
+#33 obs, 3 columns
+
+##C. Mutate
+
+#create new columns based on the values in existing columns
+#use mutate()
+
+#for instance, we may be interested in the ratio of no. of household members to rooms
+
+interviews %>% 
+  mutate(people_per_room = no_membrs/rooms) #added a new column named people_per_room
+
+#NAs
+
+interviews %>% 
+  filter(!is.na(memb_assoc)) %>% 
+  mutate(people_per_room = no_membrs/rooms) #only filtered/selected obs with no missing NAs
+
+#D. Split-apply-combine data analysis and summarize() function
+
+#group_by often used with summarize() function
+#to calculate the average household size by village
+
+interviews %>% 
+  group_by(village) %>% 
+  summarize(mean_no_membrs = mean(no_membrs))
+
+#you can also group by multiple columns
+
+interviews %>% 
+  group_by(village, memb_assoc) %>% 
+  summarize(mean_no_membrs = mean(no_membrs))
+
+#note the output is a grouped tibble, to obtain an ungrouped tibble use ungroup() function
+
+interviews %>% 
+  group_by(village, memb_assoc) %>% 
+  summarize(mean_no_membrs = mean(no_membrs)) %>% 
+  ungroup()
+
+####
+
+#Counting
+
+interviews %>% 
+  count(village, sort = T)
+
+######
+
+interviews$items_owned
+
+
+#######################################################################################
+
+##Episode 5 JSON
+
+######################################################################################
+
+##Learning objectives:
+#decribe the JSON data format, use jsonlite package to read a json file
+
+#json package to read a json file
+
+library(jsonlite)
+
+#laod data
+
+download.file("https://datacarpentry.org/r-socialsci/data/SAFI.json",
+              "data/SAFI.json", mode = "wb")
+
+#load data into our working memory
+json_data <- read_json(path='data/SAFI.json')
+
+# a new object called json_data has now appeared on our Environment as a large list 131 elements
+
+#view
+head(json_data) #its messy
+
+#because by default the read_json() function's parameter simplifyVector, which specified whether or not
+#to simplify vectors is set to FALSE. We can set to T and our data will be read as a dataframe
+
+json_data <- read_json(path='data/SAFI.json', simplifyVector = T)
+
+#now we have a dataframe of 131 obs with 74 variables
+
+head(json_data)
+str(json_data)
+
+#looks good but we have a variable that is a list of dataframes
+#clean the dataframe using subset: example each one
+
+json_data$F_liv[1] #the 1st obs
+
+#we can chose to view nested dataframes at all the rows of main dataframe where a condition is met
+#for example where the value C06 rooms is equal to 4
+
+json_data$F_liv[which(json_data$C06_rooms==4)] 
+
+#this section is really hard for a novice!!
+
+##Write the JSON file to csv
+
+#if we try to write the json file into csv we will get an error
+
+write.csv(json_data, file="SAFI_from_json.csv") #error because of the lists or nested dataframes
+
+#we will need to first flatten these columns which are lists 
+#turn the columns of dataframe to character types
+
+flat_json_data <- apply(json_data, 2, as.character) #what does 2 stands for here?????
+#margin - 2 indicates columns 
+?apply()
+
+
+#now you can write as a csv file
+
+write.csv(flat_json_data, file="data/SAFI_from_json.csv")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
